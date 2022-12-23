@@ -10,6 +10,8 @@ from asyncio import create_task
 
 
 class My_bot(discord.Bot):
+	__token: str = None
+
 	_ids_from_forward: list = None
 	_ids_to_forward: list = None
 
@@ -60,9 +62,11 @@ class My_bot(discord.Bot):
 		return places_response, places_ids_response
 
 
-	def __init__(self, ids_from_forward, ids_to_forward, **kwargs) -> None:
+	def __init__(self, ids_from_forward, ids_to_forward, token, **kwargs) -> None:
 		self._ids_from_forward = ids_from_forward
 		self._ids_to_forward = ids_to_forward
+
+		self.__token = token
 
 		if 'intents' not in kwargs:
 			kwargs['intents'] = discord.Intents.all()
@@ -80,6 +84,8 @@ class My_bot(discord.Bot):
 
 		print(f'Bot connected as user {self.user} (id {self.user.id})')
 
+	def start(self):
+		return super().start(self.__token)
 
 	async def on_message(self, message):
 		if message.channel.id in self._places_ids_from_forward and not message.author.bot:
